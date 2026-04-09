@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Growth Intel — SuperStories BV</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@400;500;700&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #0a0a0a;
+    color: #e8e2d9;
+    font-family: 'Montserrat', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .header {
+    padding: 28px 40px 22px;
+    border-bottom: 1px solid #1e1e1e;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
+  .product-name {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #ffffff;
+  }
+
+  .brand-name {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 9px;
+    font-weight: 400;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #ffffff;
+    margin-top: 4px;
+  }
+
+  .client-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    font-style: italic;
+    color: #ffffff;
+    text-align: right;
+  }
+
+  .elders-row {
+    display: flex;
+    padding: 0 40px;
+    flex-wrap: wrap;
+    border-bottom: 1px solid #1e1e1e;
+  }
+
+  .elder-btn {
+    flex-shrink: 0;
+    padding: 14px 20px;
+    background: transparent;
+    border: none;
+    border-right: 1px solid #1e1e1e;
+    color: #333;
+    cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    transition: all 0.2s;
+    position: relative;
+  }
+
+  .elder-btn:first-child { border-left: 1px solid #1e1e1e; }
+  .elder-btn:hover { color: #e8e2d9; background: #111; }
+  .elder-btn.active { color: #ffffff; background: #111; }
+  .elder-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: #ffffff;
+  }
+
+  .elder-intro {
+    padding: 20px 40px;
+    min-height: 68px;
+    border-bottom: 1px solid #1e1e1e;
+    background: #0a0a0a;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .elder-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: #ffffff;
+    white-space: nowrap;
+    min-width: 160px;
+  }
+
+  .elder-tagline {
+    font-size: 11px;
+    color: #888;
+    font-weight: 400;
+    line-height: 1.5;
+    letter-spacing: 0.02em;
+  }
+
+  .conversation {
+    flex: 1;
+    padding: 28px 40px;
+    overflow-y: auto;
+    max-height: 340px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background: #0a0a0a;
+  }
+
+  .message {
+    max-width: 78%;
+    line-height: 1.7;
+    font-size: 13px;
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .message.user {
+    align-self: flex-end;
+    background: #141414;
+    border: 1px solid #222;
+    padding: 12px 16px;
+    border-radius: 2px;
+    color: #777;
+    font-size: 12px;
+  }
+
+  .message.elder {
+    align-self: flex-start;
+    color: #d8d2c9;
+    border-left: 1px solid #333;
+    padding-left: 18px;
+  }
+
+  .message.elder .speaker {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 10px;
+    font-style: italic;
+    color: #555;
+    margin-bottom: 8px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .message.thinking {
+    align-self: flex-start;
+    color: #2a2a2a;
+    font-style: italic;
+    font-size: 11px;
+    padding-left: 18px;
+    border-left: 1px solid #1e1e1e;
+    letter-spacing: 0.05em;
+  }
+
+  .input-area {
+    padding: 18px 40px 28px;
+    border-top: 1px solid #e0e0e0;
+    background: #ffffff;
+    display: flex;
+    gap: 12px;
+    align-items: flex-end;
+  }
+
+  .input-area textarea {
+    flex: 1;
+    background: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    color: #1a1a1a;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    padding: 11px 14px;
+    resize: none;
+    outline: none;
+    line-height: 1.5;
+    min-height: 44px;
+    max-height: 120px;
+    transition: border-color 0.2s;
+  }
+
+  .input-area textarea:focus { border-color: #aaa; }
+  .input-area textarea::placeholder { color: #bbb; }
+
+  .send-btn {
+    background: #ffffff;
+    color: #0a0a0a;
+    border: none;
+    border-radius: 2px;
+    padding: 0 22px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    height: 44px;
+  }
+
+  .send-btn:hover { background: #e0e0e0; }
+  .send-btn:disabled { background: #e0e0e0; color: #aaa; cursor: not-allowed; }
+
+  .empty-state {
+    color: #222;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    text-align: center;
+    margin: auto;
+    padding: 40px;
+  }
+
+  .error-msg {
+    color: #6a3030;
+    font-size: 11px;
+    padding: 8px 0;
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="product-name">Growth Intel</div>
+    <div class="brand-name">by SuperStories BV</div>
+  </div>
+  <div class="client-name">Lonneke van Heugten</div>
+</div>
+
+<div class="elders-row" id="eldersRow"></div>
+
+<div class="elder-intro" id="elderIntro">
+  <div class="elder-tagline" style="color:#222;letter-spacing:0.1em;font-size:10px;text-transform:uppercase;">Selecteer een expert om te beginnen</div>
+</div>
+
+<div class="conversation" id="conversation">
+  <div class="empty-state">Kies een stem — stel je vraag</div>
+</div>
+
+<div class="input-area">
+  <textarea id="userInput" placeholder="Stel je vraag..." rows="1" oninput="autoResize(this)" onkeydown="handleKey(event)"></textarea>
+  <button class="send-btn" id="sendBtn" onclick="sendMessage()" disabled>Stuur</button>
+</div>
+
+<script>
+const LONNEKE_CONTEXT = `
+Lonneke van Heugten is een Nederlandse woordkunstenaar, stadsdichter van Alkmaar, en performing poet.
+Ze heeft een achtergrond in cultuurwetenschappen (bijna afgerond proefschrift), theaterervaring als dramaturg, en maakt ook muziek met haar band Galm.
+
+Haar huidige zakelijke situatie:
+- Ze verdient geld als live schrijver/keynote listener op events: ze woont een event bij, absorbeert de sfeer en presentaties, en sluit af met een live geschreven nagedicht. Ze noemt zichzelf spontaan 'keynote listener'.
+- Beste klussen tot nu toe: 900 euro (poëtische speech voor bedrijfsjubileum), 750 euro (symposium hogeschool), 600 euro (afscheid raadsleden gemeente Alkmaar).
+- Haar netwerk is voornamelijk publieke sector en culturele randzone. Ze wil uitbreiden naar bedrijfsleven, universiteiten, zorg, NGO's.
+- Ze heeft workshops poëtisch presenteren gegeven en coacht jonge creatievelingen, maar wil dat niet als hoofdactiviteit.
+- Haar website is een archief van alles wat ze doet — ze weet dat dit een probleem is.
+- Ze vindt het spannend om zichzelf te promoten: ze voelt dat ze maar een deeltje van zichzelf laat zien, en wil niet arrogant overkomen.
+- Energieprofiel: muziek/eigen creatief werk = 100%, live schrijven/performen = 70%, organiseren = 60%, administratie/marketing = laag.
+- Ze wil 4x per maand liveschrijven op events als ideaal scenario.
+- Ze werkt in Nederlands én Engels.
+- Ze heeft ook ceremoniewerk gedaan (trouwerijen) en kan modereren/dagvoorzitter zijn.
+- Haar lokale netwerk in Alkmaar is verzadigd. Ze wil landelijk en internationaal.
+
+Haar kernvraag: hoe positioneer ik mezelf zodat de juiste opdrachtgevers me vinden en ik niet onderbetaald word voor wat ik lever?
+`;
+
+const ELDERS = [
+  {
+    id: 'godin',
+    name: 'Seth Godin',
+    tagline: 'Positionering & de story die verspreidt. Voor wie precies — en wat vertellen zij verder?',
+    system: `Je bent Seth Godin. Je spreekt Nederlands. Je denkt in termen van de kleinste viable audience, remarkability, en permission marketing. Je bent direct, kort, soms provocerend. Je weigert generieke antwoorden. Je gelooft dat Lonneke moet kiezen — en dat kiezen haar vrijer maakt, niet kleiner. Reageer als Seth Godin: scherp, bondig, zonder jargon, met een onverwachte invalshoek. Maximaal 150 woorden per antwoord.`
+  },
+  {
+    id: 'enns',
+    name: 'Blair Enns',
+    tagline: 'Pricing voor creatieve professionals. Waarom verkoop je jezelf structureel te goedkoop?',
+    system: `Je bent Blair Enns, auteur van Win Without Pitching. Je spreekt Nederlands. Je denkt in termen van positionering als de basis van alles, value-based pricing, en de expert-rol versus de order-nemer. Je kent Lonneke's situatie volledig. Je ziet dat ze structureel te laag prijst en dat haar brede positionering dat probleem veroorzaakt. Reageer als Blair Enns: strategisch, met concrete principes, gericht op het bouwen van een sterkere onderhandelingspositie. Maximaal 150 woorden per antwoord.`
+  },
+  {
+    id: 'jiwa',
+    name: 'Bernadette Jiwa',
+    tagline: 'Storytelling voor producten zonder naam. Wat is het verhaal dat alleen jij kunt vertellen?',
+    system: `Je bent Bernadette Jiwa, auteur van Story Driven en Meaningful. Je spreekt Nederlands. Je denkt in termen van betekenis, het verhaal achter het werk, en hoe je een markt creëert voor iets wat mensen nog niet kennen. Je bent warm, precies, en gelooft in authenticiteit boven strategie. Je ziet dat 'keynote listener' een categorie is die ze zelf heeft uitgevonden — en dat dit haar kracht is. Reageer als Bernadette Jiwa: met aandacht voor het menselijke verhaal en wat er echt op het spel staat. Maximaal 150 woorden per antwoord.`
+  },
+  {
+    id: 'baker',
+    name: 'David C. Baker',
+    tagline: 'Positionering voor zelfstandige creatieven. Wanneer stop je met generalist zijn?',
+    system: `Je bent David C. Baker, auteur van The Business of Expertise. Je spreekt Nederlands. Je denkt in termen van specialisatie, het gevaar van breedte, en hoe expertise wordt herkend en beloond. Je bent direct, analytisch, soms ongeduldig met vaagheid. Je ziet dat ze te veel doet en daardoor onzichtbaar is voor de opdrachtgever die haar écht nodig heeft. Reageer als David C. Baker: met heldere diagnose, concrete aanbevelingen, en eerlijkheid over wat ze moet loslaten. Maximaal 150 woorden per antwoord.`
+  },
+  {
+    id: 'gibson',
+    name: 'William Gibson',
+    tagline: 'De toekomst is al hier, ongelijk verdeeld. Welke categorie claimt zij voordat iemand anders het doet?',
+    system: `Je bent William Gibson, futurist en schrijver. Je spreekt Nederlands. Je denkt in termen van emergente categorieën, zwakke signalen die sterk worden, en hoe cultuur en markt elkaar vormen. Je bent poëtisch maar precies. Je ziet dat 'keynote listener' een categorie is die aan het ontstaan is. De vraag is of ze de taal vindt voordat iemand anders de categorie claimt. Reageer als Gibson: met historisch perspectief, culturele analyse, en gevoel voor wat er onder de oppervlakte beweegt. Maximaal 150 woorden per antwoord.`
+  },
+  {
+    id: 'carnegie',
+    name: 'Dale Carnegie',
+    tagline: 'De mens achter de klant. Wat moet iemand voelen voordat ze ja kunnen zeggen?',
+    system: `Je bent Dale Carnegie. Je spreekt Nederlands. Je denkt in termen van menselijke relaties, vertrouwen, en wat mensen écht beweegt om te kopen. Je bent warm, praktisch, en gelooft dat het verkoopgesprek eigenlijk een gesprek over verbinding is. Je ziet dat haar zichtbaarheidsprobleem niet een marketingprobleem is maar een relatieprobleem. Reageer als Carnegie: met aandacht voor de menselijke kant, concrete gedragsadviezen, en optimisme. Maximaal 150 woorden per antwoord.`
+  },
+  {
+    id: 'holmes',
+    name: 'Sherlock Holmes',
+    tagline: 'Leest wat niet gezegd wordt. Wat vertelt haar transcript over haar blinde vlekken?',
+    system: `Je bent Sherlock Holmes. Je spreekt Nederlands. Je observeert wat anderen niet zien. Je bouwt conclusies uit details die irrelevant lijken. Je bent direct, soms ongeduldig, maar altijd precies. Je ziet patronen: ze noemt 'keynote listener' terloops als feit, niet als claim. Ze beschrijft haar beste klus zonder te beseffen wat dat betekent voor haar businessmodel. Reageer als Holmes: met observaties die verrassen, verbanden die ze zelf niet heeft gelegd. Maximaal 150 woorden per antwoord.`
+  },
+  {
+    id: 'dunford',
+    name: 'April Dunford',
+    tagline: 'Positionering vertaald naar website. In welke context maakt jouw aanbod het meeste zin?',
+    system: `Je bent April Dunford, auteur van Obviously Awesome. Je spreekt Nederlands. Je denkt in termen van positionering als het fundament van alle communicatie — en hoe slechte positionering zich het eerst toont op een website. Je gelooft dat positionering altijd begint met: voor wie, waartegen, en in welke situatie. Je ziet dat haar website een archief is in plaats van een verkooptool — en dat dit een positioneringsprobleem is, niet een designprobleem. Reageer als April Dunford: met concrete diagnose, praktische stappen, en directe vertaling naar wat er op haar homepage moet staan. Maximaal 150 woorden per antwoord.`
+  }
+];
+
+
+
+let activeElder = null;
+let history = [];
+let isLoading = false;
+
+function init() {
+  const row = document.getElementById('eldersRow');
+  ELDERS.forEach(e => {
+    const btn = document.createElement('button');
+    btn.className = 'elder-btn';
+    btn.textContent = e.name;
+    btn.onclick = () => selectElder(e.id);
+    btn.id = 'btn-' + e.id;
+    row.appendChild(btn);
+  });
+}
+
+function selectElder(id) {
+  activeElder = ELDERS.find(e => e.id === id);
+  history = [];
+  document.querySelectorAll('.elder-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('btn-' + id).classList.add('active');
+  document.getElementById('elderIntro').innerHTML = `
+    <div class="elder-name">${activeElder.name}</div>
+    <div class="elder-tagline">${activeElder.tagline}</div>
+  `;
+  document.getElementById('conversation').innerHTML = `<div class="empty-state">${activeElder.name} luistert</div>`;
+  document.getElementById('sendBtn').disabled = false;
+  document.getElementById('userInput').focus();
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+}
+
+async function sendMessage() {
+  if (!activeElder || isLoading) return;
+  const input = document.getElementById('userInput');
+  const text = input.value.trim();
+  if (!text) return;
+
+  isLoading = true;
+  input.value = '';
+  input.style.height = '44px';
+  document.getElementById('sendBtn').disabled = true;
+
+  const conv = document.getElementById('conversation');
+  const empty = conv.querySelector('.empty-state');
+  if (empty) empty.remove();
+
+  addMessage('user', text);
+  history.push({ role: 'user', content: text });
+
+  const thinking = document.createElement('div');
+  thinking.className = 'message thinking';
+  thinking.id = 'thinking';
+  thinking.textContent = activeElder.name + ' denkt na...';
+  conv.appendChild(thinking);
+  conv.scrollTop = conv.scrollHeight;
+
+  try {
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 1000,
+        system: activeElder.system + '\n\nContext over Lonneke:\n' + LONNEKE_CONTEXT,
+        messages: history
+      })
+    });
+
+    const data = await response.json();
+    const reply = data.content?.[0]?.text || 'Geen antwoord ontvangen.';
+    document.getElementById('thinking')?.remove();
+    history.push({ role: 'assistant', content: reply });
+    addMessage('elder', reply, activeElder.name);
+
+  } catch (err) {
+    document.getElementById('thinking')?.remove();
+    const errDiv = document.createElement('div');
+    errDiv.className = 'error-msg';
+    errDiv.textContent = 'Verbindingsfout. Controleer de API key.';
+    conv.appendChild(errDiv);
+  }
+
+  isLoading = false;
+  document.getElementById('sendBtn').disabled = false;
+  input.focus();
+}
+
+function addMessage(type, text, speaker) {
+  const conv = document.getElementById('conversation');
+  const div = document.createElement('div');
+  div.className = 'message ' + type;
+  if (type === 'elder') {
+    div.innerHTML = `<div class="speaker">${speaker}</div><div>${text.replace(/\n/g, '<br>')}</div>`;
+  } else {
+    div.textContent = text;
+  }
+  conv.appendChild(div);
+  conv.scrollTop = conv.scrollHeight;
+}
+
+init();
+</script>
+</body>
+</html>
