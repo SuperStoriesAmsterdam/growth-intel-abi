@@ -89,6 +89,51 @@
     background: #ffffff;
   }
 
+  .council-btn {
+    flex-shrink: 0;
+    padding: 14px 20px;
+    background: transparent;
+    border: none;
+    border-left: 1px solid #1e1e1e;
+    color: #333;
+    cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    transition: all 0.2s;
+    position: relative;
+    margin-left: auto;
+  }
+
+  .council-btn:hover { color: #e8e2d9; background: #111; }
+  .council-btn.active { color: #0a0a0a; background: #e8e2d9; }
+
+  .elder-btn.council-selected {
+    color: #e8e2d9;
+    background: #1a1a1a;
+  }
+  .elder-btn.council-selected::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: #555;
+  }
+
+  .multi-response {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .multi-response .message.elder {
+    max-width: 100%;
+  }
+
   .elder-intro {
     padding: 20px 40px;
     min-height: 68px;
@@ -260,6 +305,70 @@
     font-style: italic;
     color: #bbb;
   }
+
+  .mic-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 3px solid #ffffff;
+    background: #0a0a0a;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .mic-btn:hover {
+    border-color: #dc2626;
+  }
+
+  .mic-btn .mic-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #dc2626;
+    transition: all 0.2s;
+  }
+
+  .mic-btn.recording {
+    border-color: #dc2626;
+    background: #ffffff;
+  }
+
+  .mic-btn.recording .mic-dot {
+    background: #dc2626;
+    animation: pulse-dot 1.5s ease-in-out infinite;
+  }
+
+  .mic-btn.recording::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 2px solid #dc2626;
+    animation: ping-ring 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(0.85); }
+  }
+
+  @keyframes ping-ring {
+    0% { transform: scale(1); opacity: 0.6; }
+    100% { transform: scale(1.8); opacity: 0; }
+  }
+
+  .mic-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  .speech-unsupported { display: none; }
 </style>
 </head>
 <body>
@@ -267,7 +376,7 @@
 <div class="header">
   <div>
     <div class="product-name">Growth Intel</div>
-    <div class="brand-name">by SuperStories BV</div>
+    <div class="brand-name">by SuperStories</div>
   </div>
   <div class="client-name">Abi Awomosu</div>
 </div>
@@ -283,6 +392,9 @@
 </div>
 
 <div class="input-area">
+  <button class="mic-btn" id="micBtn" onclick="toggleMic()" disabled title="Hold to speak">
+    <div class="mic-dot"></div>
+  </button>
   <textarea id="userInput" placeholder="Ask your question..." rows="1" oninput="autoResize(this)" onkeydown="handleKey(event)"></textarea>
   <button class="send-btn" id="sendBtn" onclick="sendMessage()" disabled>Send</button>
 </div>
@@ -476,7 +588,10 @@ Respond as Jesse J. Anderson: practical, empathetic, specific about ADHD/autism 
 
 
 let activeElder = null;
+let councilMode = false;
+let councilElders = [];
 let history = [];
+let councilHistories = {};
 let isLoading = false;
 
 function init() {
@@ -485,16 +600,109 @@ function init() {
     const btn = document.createElement('button');
     btn.className = 'elder-btn';
     btn.textContent = e.name;
-    btn.onclick = () => selectElder(e.id);
+    btn.onclick = () => handleElderClick(e.id);
     btn.id = 'btn-' + e.id;
     row.appendChild(btn);
+  });
+
+  const councilBtn = document.createElement('button');
+  councilBtn.className = 'council-btn';
+  councilBtn.textContent = 'Council';
+  councilBtn.id = 'councilBtn';
+  councilBtn.onclick = toggleCouncilMode;
+  row.appendChild(councilBtn);
+}
+
+function toggleCouncilMode() {
+  councilMode = !councilMode;
+  const btn = document.getElementById('councilBtn');
+  btn.classList.toggle('active', councilMode);
+
+  document.querySelectorAll('.elder-btn').forEach(b => {
+    b.classList.remove('active', 'council-selected');
+  });
+
+  if (councilMode) {
+    activeElder = null;
+    councilElders = [];
+    history = [];
+    councilHistories = {};
+    document.getElementById('elderIntro').innerHTML = `
+      <div class="elder-tagline" style="color:#888;letter-spacing:0.05em;font-size:10px;">Select 2 or more advisors, then ask your question. They'll each respond independently.</div>
+    `;
+    document.getElementById('conversation').innerHTML = `<div class="empty-state">Select your council</div>`;
+    document.getElementById('sendBtn').disabled = true;
+  } else {
+    councilElders = [];
+    councilHistories = {};
+    document.getElementById('elderIntro').innerHTML = `
+      <div class="elder-tagline" style="color:#222;letter-spacing:0.1em;font-size:10px;text-transform:uppercase;">Select an advisor to begin</div>
+    `;
+    document.getElementById('conversation').innerHTML = `<div class="empty-state">Choose a voice — ask your question</div>`;
+    document.getElementById('sendBtn').disabled = true;
+  }
+}
+
+function handleElderClick(id) {
+  if (councilMode) {
+    toggleCouncilElder(id);
+  } else {
+    selectElder(id);
+  }
+}
+
+function toggleCouncilElder(id) {
+  const btn = document.getElementById('btn-' + id);
+  const idx = councilElders.indexOf(id);
+
+  if (idx > -1) {
+    councilElders.splice(idx, 1);
+    btn.classList.remove('council-selected');
+  } else {
+    councilElders.push(id);
+    btn.classList.add('council-selected');
+  }
+
+  if (councilElders.length >= 2) {
+    const names = councilElders.map(eid => ELDERS.find(e => e.id === eid).name).join(', ');
+    document.getElementById('elderIntro').innerHTML = `
+      <div class="elder-name">Council</div>
+      <div class="elder-tagline">${names}</div>
+    `;
+    document.getElementById('sendBtn').disabled = false;
+
+    // Show intros if this is first selection
+    const conv = document.getElementById('conversation');
+    conv.innerHTML = '';
+    councilElders.forEach(eid => {
+      const elder = ELDERS.find(e => e.id === eid);
+      if (elder.intro) {
+        addMessage('elder', elder.intro, elder.name);
+      }
+    });
+  } else if (councilElders.length === 1) {
+    const elder = ELDERS.find(e => e.id === councilElders[0]);
+    document.getElementById('elderIntro').innerHTML = `
+      <div class="elder-tagline" style="color:#888;letter-spacing:0.05em;font-size:10px;">Select at least one more advisor — ${elder.name} is waiting</div>
+    `;
+    document.getElementById('sendBtn').disabled = true;
+  } else {
+    document.getElementById('elderIntro').innerHTML = `
+      <div class="elder-tagline" style="color:#888;letter-spacing:0.05em;font-size:10px;">Select 2 or more advisors, then ask your question.</div>
+    `;
+    document.getElementById('sendBtn').disabled = true;
+  }
+
+  // Init histories for new elders
+  councilElders.forEach(eid => {
+    if (!councilHistories[eid]) councilHistories[eid] = [];
   });
 }
 
 function selectElder(id) {
   activeElder = ELDERS.find(e => e.id === id);
   history = [];
-  document.querySelectorAll('.elder-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.elder-btn').forEach(b => b.classList.remove('active', 'council-selected'));
   document.getElementById('btn-' + id).classList.add('active');
   document.getElementById('elderIntro').innerHTML = `
     <div class="elder-name">${activeElder.name}</div>
@@ -522,7 +730,13 @@ function handleKey(e) {
 }
 
 async function sendMessage() {
-  if (!activeElder || isLoading) return;
+  if (isLoading) return;
+  if (councilMode) {
+    if (councilElders.length < 2) return;
+    return sendCouncilMessage();
+  }
+  if (!activeElder) return;
+
   const input = document.getElementById('userInput');
   const text = input.value.trim();
   if (!text) return;
@@ -549,9 +763,7 @@ async function sendMessage() {
   try {
     const response = await fetch('/api/chat', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
         max_tokens: 1000,
@@ -573,6 +785,76 @@ async function sendMessage() {
     errDiv.textContent = 'Connection error. Check the API key.';
     conv.appendChild(errDiv);
   }
+
+  isLoading = false;
+  document.getElementById('sendBtn').disabled = false;
+  input.focus();
+}
+
+async function sendCouncilMessage() {
+  const input = document.getElementById('userInput');
+  const text = input.value.trim();
+  if (!text) return;
+
+  isLoading = true;
+  input.value = '';
+  input.style.height = '44px';
+  document.getElementById('sendBtn').disabled = true;
+
+  const conv = document.getElementById('conversation');
+  const empty = conv.querySelector('.empty-state');
+  if (empty) empty.remove();
+
+  addMessage('user', text);
+
+  // Add thinking indicators for all council elders
+  const thinkingIds = [];
+  councilElders.forEach(eid => {
+    const elder = ELDERS.find(e => e.id === eid);
+    const thinking = document.createElement('div');
+    thinking.className = 'message thinking';
+    thinking.id = 'thinking-' + eid;
+    thinking.textContent = elder.name + ' is thinking...';
+    conv.appendChild(thinking);
+    thinkingIds.push('thinking-' + eid);
+
+    if (!councilHistories[eid]) councilHistories[eid] = [];
+    councilHistories[eid].push({ role: 'user', content: text });
+  });
+  conv.scrollTop = conv.scrollHeight;
+
+  // Fire all requests in parallel
+  const promises = councilElders.map(async (eid) => {
+    const elder = ELDERS.find(e => e.id === eid);
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-haiku-4-5-20251001',
+          max_tokens: 1000,
+          system: elder.system + '\n\nContext about Abi:\n' + ABI_CONTEXT,
+          messages: councilHistories[eid]
+        })
+      });
+      const data = await response.json();
+      const reply = data.content?.[0]?.text || 'No response received.';
+
+      document.getElementById('thinking-' + eid)?.remove();
+      councilHistories[eid].push({ role: 'assistant', content: reply });
+      addMessage('elder', reply, elder.name);
+      conv.scrollTop = conv.scrollHeight;
+
+    } catch (err) {
+      document.getElementById('thinking-' + eid)?.remove();
+      const errDiv = document.createElement('div');
+      errDiv.className = 'error-msg';
+      errDiv.textContent = elder.name + ': Connection error.';
+      conv.appendChild(errDiv);
+    }
+  });
+
+  await Promise.all(promises);
 
   isLoading = false;
   document.getElementById('sendBtn').disabled = false;
@@ -646,6 +928,98 @@ function addMessage(type, text, speaker) {
   conv.appendChild(div);
   conv.scrollTop = conv.scrollHeight;
 }
+
+// Speech Recognition
+let recognition = null;
+let isRecording = false;
+
+function initSpeech() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    document.getElementById('micBtn').style.display = 'none';
+    return;
+  }
+
+  recognition = new SpeechRecognition();
+  recognition.continuous = true;
+  recognition.interimResults = true;
+  recognition.lang = 'en-US';
+
+  let finalTranscript = '';
+
+  recognition.onresult = (event) => {
+    let interim = '';
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+      const transcript = event.results[i][0].transcript;
+      if (event.results[i].isFinal) {
+        finalTranscript += transcript + ' ';
+      } else {
+        interim = transcript;
+      }
+    }
+    const input = document.getElementById('userInput');
+    input.value = finalTranscript + interim;
+    autoResize(input);
+  };
+
+  recognition.onend = () => {
+    if (isRecording) {
+      // Auto-restart if still in recording mode (browser sometimes stops)
+      recognition.start();
+    }
+  };
+
+  recognition.onerror = (event) => {
+    if (event.error !== 'no-speech' && event.error !== 'aborted') {
+      console.error('Speech error:', event.error);
+      stopMic();
+    }
+  };
+}
+
+function toggleMic() {
+  if (isRecording) {
+    stopMic();
+  } else {
+    startMic();
+  }
+}
+
+function startMic() {
+  if (!recognition) return;
+  const micBtn = document.getElementById('micBtn');
+  isRecording = true;
+  micBtn.classList.add('recording');
+  document.getElementById('userInput').value = '';
+  recognition.start();
+}
+
+function stopMic() {
+  if (!recognition) return;
+  const micBtn = document.getElementById('micBtn');
+  isRecording = false;
+  micBtn.classList.remove('recording');
+  recognition.stop();
+}
+
+initSpeech();
+
+// Enable mic button when an elder or council is selected
+const origSelectElder = selectElder;
+selectElder = function(id) {
+  origSelectElder(id);
+  if (recognition) document.getElementById('micBtn').disabled = false;
+};
+
+const origToggleCouncilElder = toggleCouncilElder;
+toggleCouncilElder = function(id) {
+  origToggleCouncilElder(id);
+  if (recognition && councilElders.length >= 2) {
+    document.getElementById('micBtn').disabled = false;
+  } else if (recognition) {
+    document.getElementById('micBtn').disabled = true;
+  }
+};
 
 init();
 </script>
