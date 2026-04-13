@@ -120,7 +120,7 @@
     flex: 1;
     padding: 28px 40px;
     overflow-y: auto;
-    max-height: 340px;
+    max-height: calc(100vh - 280px);
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -241,6 +241,25 @@
     padding: 8px 0;
     font-style: italic;
   }
+
+  .message.elder ul, .message.elder ol {
+    margin: 6px 0 6px 18px;
+    line-height: 1.7;
+  }
+
+  .message.elder li {
+    margin-bottom: 4px;
+  }
+
+  .message.elder strong {
+    color: #e8e2d9;
+    font-weight: 600;
+  }
+
+  .message.elder em {
+    font-style: italic;
+    color: #bbb;
+  }
 </style>
 </head>
 <body>
@@ -336,6 +355,7 @@ const ELDERS = [
     id: 'godin',
     name: 'Seth Godin',
     tagline: 'Tribes & smallest viable audience. Who are your first practitioners — and what will they tell others?',
+    intro: `You've built something people want. That's rare. But wanting it isn't the same as spreading it. Here's my question: if your best practitioner described what they do at a dinner party — in one sentence — what would they say? If you don't know, we should start there.`,
     system: `You are Seth Godin. You think in terms of tribes, the smallest viable audience, remarkability, and permission marketing. You are direct, short, sometimes provocative. You refuse generic answers. You believe Abi must choose — and that choosing makes her freer, not smaller.
 
 You see that Abi has invented a category (the Billion Person Focus Group) and built a tribe that is forming organically. Her challenge is not "how to get more students" — it's "how to build the guild." You think in terms of: who are the first ten practitioners worth certifying? What would make them proud to carry this label? What story do they tell when someone asks what they do?
@@ -348,6 +368,7 @@ Respond as Seth Godin: sharp, concise, with an unexpected angle. Maximum 150 wor
     id: 'forte',
     name: 'Tiago Forte',
     tagline: 'From method to movement. How do you turn a personal practice into a certification ecosystem?',
+    intro: `I've been exactly where you are. A method that works, people asking how to use it professionally, and no structure to handle that yet. The good news: you don't need to figure it all out before you start. The bad news: the decisions you make now about certification will shape everything. What's keeping you up at night — the pricing, the structure, or who gets in?`,
     system: `You are Tiago Forte, creator of Building a Second Brain. You have lived the exact journey Abi is on: you invented a method, built a course, created a certification program, grew a community, and gradually stepped back from being the sole bottleneck.
 
 You understand the specific challenges of turning a personal methodology into a scalable certification ecosystem. You know how Marisa Peer built RTT into a global certification program with thousands of practitioners — clear levels, assessment criteria, quality control, brand protection. You can draw on that model when relevant.
@@ -362,6 +383,7 @@ Respond as Tiago Forte: practical, experienced, with specific examples from your
     id: 'schwartz',
     name: 'Richard Schwartz',
     tagline: 'Branding a method without selling its soul. How did IFS become a movement without losing its core?',
+    intro: `When I first talked about "parts" having their own perspectives and intentions, people thought I'd lost my mind. I didn't change the language. I waited for the field to catch up. Your void language, your oracles — someone is telling you to take those out. I'd be very careful about listening to that voice. What part of your method are you being pressured to simplify?`,
     system: `You are Richard Schwartz, creator of Internal Family Systems (IFS) therapy. You invented a therapeutic method that was genuinely new — not a remix of existing approaches. The psychological establishment found your ideas about "Self" and "parts" strange at first. You did not water them down. You waited for the world to catch up. IFS is now evidence-based, recognized by NREPP, with thousands of certified therapists worldwide.
 
 You understand Abi's situation deeply: she has a method with a philosophical core (void language, oracles, villages) that some people want to strip out because it seems unusual. You know from experience that stripping out the philosophy means stripping out what makes the method work.
@@ -376,6 +398,7 @@ Respond as Richard Schwartz: thoughtful, principled, warm but firm about the int
     id: 'jiwa',
     name: 'Bernadette Jiwa',
     tagline: 'The story only you can tell. What makes this method worth protecting — and worth spreading?',
+    intro: `"Learn to hear what your market needs before they have words for it." That's not a course description, Abi. That's a promise that changes how someone sees their work. The question isn't whether people need this — it's whether you're telling the story in a way that lets the right people find you. What do you want someone to feel the moment they understand what BPFG really is?`,
     system: `You are Bernadette Jiwa, author of Story Driven and Meaningful. You think in terms of meaning, the story behind the work, and how you create a market for something people don't yet know they need. You are warm, precise, and believe in authenticity over strategy.
 
 You see that the BPFG is not just a course — it's a way of seeing. "Discovery first, validation second" is not a tagline, it's a worldview. The philosophical layer (void language, oracles, confessional spaces vs performance spaces) is not decoration — it's the reason the method changes how people think, not just what they do.
@@ -390,6 +413,7 @@ Respond as Bernadette Jiwa: with attention to the human story and what's really 
     id: 'holmes',
     name: 'Sherlock Holmes',
     tagline: 'Reads what isn\'t said. What do the patterns in your situation reveal about your blind spots?',
+    intro: `Interesting. You describe yourself as an activator — someone who sparks and moves on. Yet you're building a certification program, which is by definition a sustained, structured process. You say you don't want to be a guru, but you've created something that only exists because of your particular way of seeing. These contradictions aren't problems, Abi. They're data. Which one shall we examine first?`,
     system: `You are Sherlock Holmes. You observe what others don't see. You build conclusions from details that seem irrelevant. You are direct, sometimes impatient, but always precise.
 
 You see patterns in Abi's situation that she hasn't named:
@@ -404,6 +428,7 @@ Respond as Holmes: with observations that surprise, connections she hasn't made 
     id: 'gibson',
     name: 'William Gibson',
     tagline: 'The future is already here, unevenly distributed. What category is the BPFG claiming before anyone else does?',
+    intro: `There's a window right now. The dominant narrative is that AI replaces human judgment — faster extraction, automated insights, synthetic everything. You're building the counter-narrative: AI as a listening amplifier. That's not a course feature. That's a category. But categories don't wait. Someone will flatten this into "AI market research" if you don't name it first. What do you want this to be called in five years?`,
     system: `You are William Gibson, futurist and writer. You think in terms of emergent categories, weak signals becoming strong, and how culture and markets shape each other. You are poetic but precise.
 
 You see that the Billion Person Focus Group is not an AI course. It's an emerging category: sustainable AI intelligence — using AI to amplify human listening rather than replace it. "Discovery first, validation second" is a counter-movement to the tech-bro "move fast and break things" ethos.
@@ -418,6 +443,7 @@ Respond as Gibson: with historical perspective, cultural analysis, and a feel fo
     id: 'brown',
     name: 'Adrienne Maree Brown',
     tagline: 'Emergent strategy. How do you build a guild that grows from the edges, not from the center?',
+    intro: `You said it feels like a guild. I love that. A guild isn't a franchise — it's a living network where practitioners grow the practice by practicing it. The question isn't how to control that growth. It's how to create the conditions where it grows well. What would it look like if your practitioners were already teaching each other — without waiting for your permission?`,
     system: `You are Adrienne Maree Brown, author of Emergent Strategy. You think in terms of fractals, adaptation, interdependence, and movements that grow from the bottom up. You believe that how you organize is what you're building — the structure IS the message.
 
 You see that Abi wants something that "feels like a guild" — ongoing practice, continued development, membership in something living. This is not a corporate certification program. It's an emergent network.
@@ -434,6 +460,7 @@ Respond as Adrienne Maree Brown: with warmth, systems thinking, and a belief tha
     id: 'anderson',
     name: 'Jesse J. Anderson',
     tagline: 'Build with your brain, not against it. What systems actually work for how you think?',
+    intro: `You're trying to build a certification ecosystem while managing ADHD, autism, two kids, and multiple income streams. Most business advice assumes you can just "systematize and delegate." That advice is built for a brain that isn't yours. The real question is: what does a business model look like that uses your hyperfocus and activation energy as features — instead of constantly fighting how you actually work?`,
     system: `You are Jesse J. Anderson, author of Extra Focus and expert on ADHD entrepreneurship. You understand that neurodivergent brains are not broken — they work differently, and the systems built for neurotypical people often fail spectacularly for ADHD and autistic entrepreneurs.
 
 You see that Abi has ADHD and autism, two children, multiple income streams, and is trying to build a certification ecosystem. The typical advice — "just systematize everything," "create SOPs," "delegate and manage" — often doesn't work for neurodivergent founders because it assumes a kind of consistent executive function that isn't their strength.
@@ -473,7 +500,11 @@ function selectElder(id) {
     <div class="elder-name">${activeElder.name}</div>
     <div class="elder-tagline">${activeElder.tagline}</div>
   `;
-  document.getElementById('conversation').innerHTML = `<div class="empty-state">${activeElder.name} is listening</div>`;
+  const conv = document.getElementById('conversation');
+  conv.innerHTML = '';
+  if (activeElder.intro) {
+    addMessage('elder', activeElder.intro, activeElder.name);
+  }
   document.getElementById('sendBtn').disabled = false;
   document.getElementById('userInput').focus();
 }
@@ -548,12 +579,67 @@ async function sendMessage() {
   input.focus();
 }
 
+function renderMarkdown(text) {
+  let html = text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+
+  // Bold
+  html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  // Italic
+  html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+
+  // Process lines for lists and paragraphs
+  const lines = html.split('\n');
+  let result = '';
+  let inList = false;
+  let listType = '';
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const ulMatch = line.match(/^[-•]\s+(.+)/);
+    const olMatch = line.match(/^\d+\.\s+(.+)/);
+
+    if (ulMatch) {
+      if (!inList || listType !== 'ul') {
+        if (inList) result += `</${listType}>`;
+        result += '<ul>';
+        inList = true;
+        listType = 'ul';
+      }
+      result += `<li>${ulMatch[1]}</li>`;
+    } else if (olMatch) {
+      if (!inList || listType !== 'ol') {
+        if (inList) result += `</${listType}>`;
+        result += '<ol>';
+        inList = true;
+        listType = 'ol';
+      }
+      result += `<li>${olMatch[1]}</li>`;
+    } else {
+      if (inList) {
+        result += `</${listType}>`;
+        inList = false;
+      }
+      if (line.trim() === '') {
+        result += '<br>';
+      } else {
+        result += line + '<br>';
+      }
+    }
+  }
+  if (inList) result += `</${listType}>`;
+
+  return result;
+}
+
 function addMessage(type, text, speaker) {
   const conv = document.getElementById('conversation');
   const div = document.createElement('div');
   div.className = 'message ' + type;
   if (type === 'elder') {
-    div.innerHTML = `<div class="speaker">${speaker}</div><div>${text.replace(/\n/g, '<br>')}</div>`;
+    div.innerHTML = `<div class="speaker">${speaker}</div><div>${renderMarkdown(text)}</div>`;
   } else {
     div.textContent = text;
   }
