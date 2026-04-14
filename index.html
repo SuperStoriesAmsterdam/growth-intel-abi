@@ -729,9 +729,12 @@ function toggleCouncilElder(id) {
     document.getElementById('sendBtn').disabled = true;
   }
 
-  // Init histories for new elders
+  // Init histories for new elders, seed with intro
   councilElders.forEach(eid => {
-    if (!councilHistories[eid]) councilHistories[eid] = [];
+    if (!councilHistories[eid]) {
+      const elder = ELDERS.find(e => e.id === eid);
+      councilHistories[eid] = elder.intro ? [{ role: 'assistant', content: elder.intro }] : [];
+    }
   });
 }
 
@@ -748,6 +751,7 @@ function selectElder(id) {
   conv.innerHTML = '';
   if (activeElder.intro) {
     addMessage('elder', activeElder.intro, activeElder.name);
+    history.push({ role: 'assistant', content: activeElder.intro });
   }
   document.getElementById('sendBtn').disabled = false;
   document.getElementById('userInput').focus();
