@@ -225,8 +225,8 @@
   .input-area {
     flex-shrink: 0;
     padding: 18px 40px 28px;
-    border-top: 2px solid #c53a3a;
-    background: #ffffff;
+    border-top: none;
+    background: #c53a3a;
     display: flex;
     gap: 12px;
     align-items: flex-end;
@@ -234,8 +234,8 @@
 
   .input-area textarea {
     flex: 1;
-    background: #f9f9f9;
-    border: 1px solid #e0e0e0;
+    background: #ffffff;
+    border: none;
     border-radius: 2px;
     color: #1a1a1a;
     font-family: 'Montserrat', sans-serif;
@@ -249,13 +249,14 @@
     transition: border-color 0.2s;
   }
 
-  .input-area textarea:focus { border-color: #c53a3a; }
-  .input-area textarea::placeholder { color: #bbb; }
+  .input-area textarea:focus { outline: none; }
+  .input-area textarea::placeholder { color: #999; }
 
   .send-btn {
     background: #ffffff;
     color: #0a0a0a;
     border: none;
+    box-shadow: none;
     border-radius: 2px;
     padding: 0 22px;
     font-family: 'Montserrat', sans-serif;
@@ -269,8 +270,8 @@
     height: 44px;
   }
 
-  .send-btn:hover { background: #e0e0e0; }
-  .send-btn:disabled { background: #e0e0e0; color: #aaa; cursor: not-allowed; }
+  .send-btn:hover { background: #f0f0f0; }
+  .send-btn:disabled { background: rgba(255,255,255,0.6); color: #aaa; cursor: not-allowed; }
 
   .empty-state {
     color: #222;
@@ -321,12 +322,12 @@
     transition: all 0.2s;
     flex-shrink: 0;
     position: relative;
-    box-shadow: 0 0 0 3px #0a0a0a;
+    box-shadow: none;
   }
 
   .mic-btn:hover {
     border-color: #ffffff;
-    box-shadow: 0 0 0 3px #0a0a0a, 0 0 12px rgba(200, 60, 60, 0.3);
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
   }
 
   .mic-btn .mic-dot {
